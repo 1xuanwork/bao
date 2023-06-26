@@ -1,25 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>時間變數調整網頁</title>
+  <title>Bao Story</title>
   <style>
-    /* 根據需要調整樣式 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .row input[type="text"] {
+      padding: 5px;
+      width: 200px;
+    }
+
+    #content {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #message {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
     #timeline {
-      width: 100%;
-      height: 100px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 90%;
+      height: 200px;
       overflow-x: auto;
+      margin: 0 auto;   
+    }
+
+    #dateSlider {
+      width: 100%;
     }
   </style>
 </head>
 <body>
-  <h1>時間變數調整網頁</h1>
-  
-  <div id="content">
-    <p id="message">根據時間變數顯示不同的內容</p>
+
+  <div>
+  <div class="row">
+    <input type="text" id="startDateInput">
+    <div id="content">
+      <p id="message"></p>
+    </div>
+    <input type="text" id="currentDateInput">
   </div>
-  
+
   <div id="timeline">
-    <input type="range" id="dateSlider" min="20221118" max="20230625" step="1">
+    <input type="range" id="dateSlider" min="20221118" max="" step="1" disabled>
   </div>
 
   <script>
@@ -27,15 +69,47 @@
     function updateContent() {
       var dateSlider = document.getElementById('dateSlider');
       var selectedDate = dateSlider.value;
-      
+
       // 在這裡根據選定的日期變數更新顯示的內容
       var message = document.getElementById('message');
-      message.innerHTML = "根據時間變數 " + selectedDate + " 顯示不同的內容";
+      message.innerHTML = selectedDate;
     }
-    
-    // 監聽時間軸滑動事件
+
+    // 獲取今日日期並設置為時間軸的最大值
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
+    var month = currentDate.getMonth() + 1;
+    var day = currentDate.getDate();
+    var currentDateStr = year + "" + (month < 10 ? "0" + month : month) + "" + (day < 10 ? "0" + day : day);
+
     var dateSlider = document.getElementById('dateSlider');
+    dateSlider.max = currentDateStr;
+
+    // 監聽時間軸滑動事件
     dateSlider.addEventListener('input', updateContent);
+
+    // 綁定起始日期輸入框的事件
+    var startDateInput = document.getElementById('startDateInput');
+    startDateInput.addEventListener('input', function() {
+      var startDate = startDateInput.value;
+
+      // 檢查輸入的值是否為 "20221118"
+      if (startDate === "20221118") {
+        // 啟用時間軸
+        dateSlider.disabled = false;
+      } else {
+        // 禁用時間軸
+        dateSlider.disabled = true;
+      }
+    });
+
+    // 綁定今日日期輸入框的事件
+    var currentDateInput = document.getElementById('currentDateInput');
+    currentDateInput.value = currentDateStr;
+    currentDateInput.addEventListener('input', function() {
+      var newCurrentDate = currentDateInput.value;
+      dateSlider.max = newCurrentDate;
+    });
   </script>
 </body>
 </html>
